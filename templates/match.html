@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Matches
+{% endblock %}
+
+{% block background_src %}
+    match
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="wrap">
+            <div id="tinderslide">
+                <ul>
+                    {% for index, animal in enumerate(animals, start=1) %}
+                        <li class="pane{{ index }}" id="{{ animal.id }}">
+                            <div class="img"><img src="{{ url_for('static', filename='img/animal' + str(animal.id) + '.jpeg') }}"></div>
+                            <div class="img_text">{{ animal.name }} | {{ animal.age_num }}</div>
+                            <div class="like"><img src="{{ url_for('static', filename='img/liked.png') }}"></div>
+                            <div class="dislike"><img src="{{ url_for('static', filename='img/nope.png') }}"></div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- jTinder trigger by buttons  -->
+        <div class="actions">
+            <a href="#" class="dislike"><img src="{{ url_for('static', filename='img/dislike_button.png') }}"></a>
+            <a href="#" class="like"><img src="{{ url_for('static', filename='img/like_button.png') }}"></a>
+        </div>
+
+        <!-- jTinder status text  -->
+        <div id="status"></div>
+    </div>
+{% endblock %}

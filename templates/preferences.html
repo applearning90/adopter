@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    preferences
+{% endblock %}
+
+{% block background_src %}
+    preferences
+{% endblock %}
+
+{% block main %}
+    <form action="{{ url_for('preferences') }}" method="post" id="preferences" class="form-horizontal" data-toggle="validator" role="form">
+        <h4 class="title">WHERE</h4>
+        <div class="form-group well">
+            <div class="form-group location">
+                <div class="col-md-2"></div>
+                <label for="city" class="col-md-2 control-label">City:</label>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" placeholder="Victoria" id="city" name="city">
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <div class="form-group location">
+                <div class="col-md-2"></div>
+                <label for="province" class="col-md-2 control-label">Province:</label>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" placeholder="BC" id="province" name="province">
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <div class="forn-group slide">
+                <div class="slidecontainer">
+                    <input type="range" min="1" max="150" value="75" class="slider" id="distValue" name="slider">
+                    <p>Distance: <span id="distance"></span>km</p>
+                </div>
+            </div>
+        </div>
+
+
+        <h4 class="title">TYPE</h4>
+        <div class="form-group well">
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectDog" class="type" value="dog" name="check" {% if preferences["dog"] %} checked {% endif %}>
+                <label for="selectDog">Dog</label>
+            </div>
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectCat" class="type" value="cat" name="check" {% if preferences["cat"] %} checked {% endif %}>
+                <label for="selectCat">Cat</label>
+            </div>
+            <div class="help-block with-errors"></div>
+        </div>
+
+        <h4 class="title">AGE</h4>
+        <div class="form-group well">
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectYoung" class="age" value="young" name="check" {% if preferences["young"] %} checked {% endif %}>
+                <label for="selectYoung">Puppy/Kitten (under 6 months)</label>
+            </div>
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectAdult" class="age" value="adult" name="check" {% if preferences["adult"] %} checked {% endif %}>
+                <label for="selectAdult">Adult</label>
+            </div>
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectSenior" class="age" value="senior" name="check" {% if preferences["senior"] %} checked {% endif %}>
+                <label for="selectSenior">Senior (over 8 years)</label>
+            </div>
+            <div class="help-block with-errors"></div>
+        </div>
+
+        <h4 class="title">SIZE</h4>
+        <div class="form-group well">
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectSmall" class="size" value="small" name="check" {% if preferences["small"] %} checked {% endif %}>
+                <label for="selectSmall">Small (under 25 lbs)</label>
+            </div>
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectMedium" class="size" value="medium" name="check" {% if preferences["medium"] %} checked {% endif %}>
+                <label for="selectMedium">Medium (25 - 70 lbs)</label>
+            </div>
+            <div class="checkbox checkbox-inline">
+                <input type="checkbox" id="selectLarge" class="size" value="large" name="check" {% if preferences["large"] %} checked {% endif %}>
+                <label for="selectLarge">Large (over 70 lbs)</label>
+            </div>
+            <div class="help-block with-errors"></div>
+        </div>
+
+        <h4 class="title">PERSONALITY</h4>
+        <div class="form-group well">
+            <div class="checkbox">
+                <input type="checkbox" value="active" id="personality1" name="check" {% if preferences["active"] %} checked {% endif %}>
+                <label for="personality1">Energetic (active lifestyle required)</label>
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" value="kids" id="personality2" name="check" {% if preferences["kids"] %} checked {% endif %}>
+                <label for="personality2">Good with kids</label>
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" value="animals" id="personality3" name="check" {% if preferences["animals"] %} checked {% endif %}>
+                <label for="personality3">Good with other animals</label>
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" value="special" id="personality4" name="check" {% if preferences["special"] %} checked {% endif %}>
+                <label for="personality4">Special needs/medical needs</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button class="btn-outline-gradient" type="submit"><span>Save</span></button>
+        </div>
+    </form>
+    <script>
+        // preferences distance slider
+        var slider = document.getElementById("distValue");
+        var output = document.getElementById("distance");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function() {
+          output.innerHTML = this.value;
+        }
+    </script>
+{% endblock %}

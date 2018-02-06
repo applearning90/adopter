@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Matches
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h1>Adopter</h1>
+        <p>Chat with matches will be displayed here.</p>
+    </div>
+    <div class="container">
+        {% for animal in animals %}
+            <div class="well">
+                <div>Animal Name: {{ animal.name }}</div>
+                <div>Age: {{ animal.age_num }}</div>
+                <div class="img"><img src="{{ url_for('static', filename='img/animal' + str(animal.id) + '.jpeg') }}"></div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
