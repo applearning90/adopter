@@ -113,10 +113,12 @@ class Shelter(db.Model):
 
     __tablename__ = "shelters"
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
     address = db.Column(db.Text)
     phone = db.Column(db.Text)
 
-    def __init__(self, address, phone):
+    def __init__(self, name, address, phone):
+        self.name = name
         self.address = address
         self.phone = phone
 
