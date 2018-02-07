@@ -29,9 +29,7 @@ app.config["PREFERRED_URL_SCHEME"] = 'https'
 app.config["DEBUG"] = True
 Session(app)
 
-# session["user_id"] = 1
-
-# store refernece to python function to be used in jinja
+# store refernece to python functions required in jinja
 app.jinja_env.globals.update(enumerate=enumerate, str=str)
 
 # Flask-SQLAlchemy
@@ -54,67 +52,73 @@ class User(db.Model):
         self.email = email
         self.hash = hash
 
-class Preferences(db.Model):
+class Trait(db.Model):
+
+    __tablename__ = "traits"
+    id = db.Column(db.Integer, primary_key=True)
+    trait = db.Column(db.Text)
+
+    def __init__(self, trait):
+        self.trait = trait
+
+class Preference(db.Model):
 
     __tablename__ = "preferences"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    dog = db.Column(db.Boolean)
-    cat = db.Column(db.Boolean)
-    young = db.Column(db.Boolean)
-    adult = db.Column(db.Boolean)
-    senior = db.Column(db.Boolean)
-    small = db.Column(db.Boolean)
-    medium = db.Column(db.Boolean)
-    large = db.Column(db.Boolean)
-    active = db.Column(db.Boolean)
-    kids = db.Column(db.Boolean)
-    animals = db.Column(db.Boolean)
-    special = db.Column(db.Boolean)
+    trait_id = db.Column(db.Integer, db.ForeignKey('traits.id'))
 
-    def __init__(self, user_id, dog, cat, young, adult, senior, small, medium, large, active, kids, animals, special):
+    def __init__(self, user_id, trait_id):
         self.user_id = user_id
-        self.dog = dog
-        self.cat = cat
-        self.young = young
-        self.adult = adult
-        self.senior = senior
-        self.small = small
-        self.medium = medium
-        self.large = large
-        self.active = active
-        self.kids = kids
-        self.animals = animals
-        self.special = special
+        self.trait_id = trait_id
+
+class Type(db.Model):
+
+    __tablename__ = "type"
+    id = db.Column(db.Integer, primary_key=True)
+    species = db.Column(db.Text)
+
+    def __init__(self, species):
+        self.species = species
 
 class Animal(db.Model):
 
     __tablename__ = "animals"
     id = db.Column(db.Integer, primary_key=True)
-    dog = db.Column(db.Boolean)
-    cat = db.Column(db.Boolean)
-    age = db.Column(db.Text)
-    age_num = db.Column(db.Text)
-    size = db.Column(db.Text)
-    active = db.Column(db.Boolean)
-    kids = db.Column(db.Boolean)
-    animals = db.Column(db.Boolean)
-    special = db.Column(db.Boolean)
-    shelter = db.Column(db.Text)
     name = db.Column(db.Text)
+    type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
+    age = db.Column(db.Text)
+    breed = db.Column(db.Text)
+    description = db.Column(db.Text)
+    shelter_id = db.Column(db.Integer, db.ForeignKey('shelters.id'))
 
-    def __init__(self, dog, cat, age, age_num, size, active, kids, animals, special, shelter, name):
-        self.dog = dog
-        self.cat = cat
-        self.age = age
-        self.age_num = age_num
-        self.size = size
-        self.active = active
-        self.kids = kids
-        self.animals = animals
-        self.special = special
-        self.shelter = shelter
+    def __init__(self, name, type_id, age, breed, description, shelter_id):
         self.name = name
+        self.type_id = type_id
+        self.age = age
+        self.breed = breed
+        self.description = description
+        self.shelter = shelter
+
+class Animal_Profile(db.Model):
+
+    __tablename__ = "animal_profile"
+    id = db.Column(db.Integer, primary_key=True)
+    trait_id = db.Column(db.Integer, db.ForeignKey('traits.id'))
+
+    def __init__(self, trait_id):
+        self.trait_id = trait_id
+
+class Shelter(db.Model):
+
+    __tablename__ = "shelters"
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.Text)
+    phone = db.Column(db.Text)
+
+    def __init__(self, address, phone):
+        self.address = address
+        self.phone = phone
 
 class Swipe(db.Model):
 
