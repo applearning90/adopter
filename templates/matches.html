@@ -6,15 +6,26 @@
 
 {% block main %}
     <div class="container">
-        <h1>Adopter</h1>
-        <p>Chat with matches will be displayed here.</p>
+        <h1>Your Matches</h1>
+        <p>Here you will find more information about your matches including contact info to meet your future pet in person <3</p>
     </div>
     <div class="container">
         {% for animal in animals %}
             <div class="well">
-                <div>Animal Name: {{ animal.name }}</div>
-                <div>Age: {{ animal.age_num }}</div>
-                <div class="img"><img src="{{ url_for('static', filename='img/animal' + str(animal.id) + '.jpeg') }}"></div>
+                
+                <div class="row">
+                    <div class="col-sm-4"><div class="img"><img src="{{ url_for('static', filename='img/animal' + str(animal.id) + '.jpeg') }}"></div></div>
+                    <div class="col-sm-4">
+                        <h4>{{ animal.name }}</h4>
+                        <div>Age: {{ animal.age }}</div>
+                        <div>Breed: {{ animal.breed }}</div>
+                        <div>Sex: {{ animal.sex }}</div>
+                        <div>Shelter: {{ animal.shelter.name }}</div>
+                        <div>Phone: {{ animal.shelter.phone }}</div>
+                        <div>Address: {{ animal.shelter.address }}</div>
+                    </div>
+                    <div class="col-sm-4">{{ animal.description }}</div>
+                </div>
             </div>
         {% endfor %}
     </div>

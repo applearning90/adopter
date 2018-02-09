@@ -104,7 +104,9 @@ class Animal(db.Model):
     age = db.Column(db.Text)
     breed = db.Column(db.Text)
     description = db.Column(db.Text)
+    sex = db.Column(db.Text)
     shelter_id = db.Column(db.Integer, db.ForeignKey('shelters.id'))
+    shelter = relationship("Shelter")
 
     def __init__(self, name, type_id, age, breed, description, shelter_id):
         self.name = name
@@ -143,8 +145,8 @@ class Swipe(db.Model):
 
     __tablename__ = "swipes"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-    animal_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    animal_id = db.Column(db.Integer, db.ForeignKey('animals.id'))
     match = db.Column(db.Boolean)
 
     def __init__(self, user_id, animal_id, match):
@@ -238,10 +240,6 @@ def match():
     for species in type_preferences:
         current_type_prefs.append(species.type_id)
 
-    print("TYPE AND TRAIT PREFERENCES")
-    print(current_type_prefs)
-    print(current_trait_prefs)
-
     # pull all animals that match type preference in db
     animals = Animal.query.filter(Animal.type_id.in_(current_type_prefs)).all()
 
@@ -268,9 +266,7 @@ def match():
             ids.append(animal.id)
         # reset match variable to True for next animal
         match = True
-
-    print("IDS THAT MATCH CRITERIA")
-    print(ids)    
+   
     # pull users matches and already viewed animals
     swipes = Swipe.query.filter(Swipe.user_id == session["user_id"]).all()
 
@@ -278,15 +274,9 @@ def match():
         if swipe.animal_id in ids:
             ids.remove(swipe.animal_id)
 
-    print("IDS WITH PREVIOUS MATCHES REMOVED")
-    print(ids)
-
     # query db for animals that match preferences
     display_animals = Animal.query.filter(Animal.id.in_(ids)).all()
     random.shuffle(display_animals)
-
-    print("ANIMALS TO BE DISPLAYED ON MATCH PAGE")
-    print(display_animals)
 
     return render_template('match.html', animals=display_animals)
 
@@ -299,7 +289,7 @@ def save_swipe():
             raise RuntimeError("missing item")
 
         #create swipe object and add to db
-        swipe = Swipe(session['user_id'], int(request.form.get("animal_id")), int(request.form.get("match")))
+        swipe = Swipe(session["user_id"], int(request.form.get("animal_id")), int(request.form.get("match")))
         db.session.add(swipe)
         db.session.commit()
 
@@ -310,9 +300,9 @@ def save_swipe():
 
 @app.route('/matches')
 @login_required
-def chat():
+def matches():
     # pull users matches from swipes table
-    swipes = Swipe.query.filter(and_(Swipe.user_id == session["user_id"], Swipe.match == 1)).all()
+    swipes = Swipe.query.filter(and_(Swipe.user_id == session["user_id"], Swipe.match == True)).all()
 
     # create list of animal ids to be selected with query
     ids = []
@@ -320,7 +310,10 @@ def chat():
         ids.append(int(swipe.animal_id))
 
     # query animal table for ids that match positive swipes
-    animals = Animal.query.filter(Animal.id.in_(ids)).all()
+    animals = Animal.query.join(Shelter).filter(Animal.id.in_(ids)).all()
+
+    for animal in animals:
+        print(animal.sex)
 
     return render_template('matches.html', animals=animals)
 
