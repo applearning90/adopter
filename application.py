@@ -2,6 +2,7 @@ from flask import Flask, url_for, request, render_template, session, redirect, f
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_, and_, update
+from sqlalchemy.orm import relationship
 
 from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
@@ -56,17 +57,18 @@ class Trait(db.Model):
 
     __tablename__ = "traits"
     id = db.Column(db.Integer, primary_key=True)
-    trait = db.Column(db.Text)
+    name = db.Column(db.Text)
 
-    def __init__(self, trait):
-        self.trait = trait
+    def __init__(self, name):
+        self.name = name
 
-class Preference(db.Model):
+class Preferences(db.Model):
 
     __tablename__ = "preferences"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     trait_id = db.Column(db.Integer, db.ForeignKey('traits.id'))
+    trait = relationship("Trait")
 
     def __init__(self, user_id, trait_id):
         self.user_id = user_id
@@ -80,6 +82,18 @@ class Type(db.Model):
 
     def __init__(self, species):
         self.species = species
+
+class Type_Preference(db.Model):
+
+    __tablename__ = "type_preferences"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
+    type = relationship("Type")
+
+    def __init__(self, user_id, type_id):
+        self.user_id = user_id
+        self.type_id = type_id
 
 class Animal(db.Model):
 
@@ -104,9 +118,12 @@ class Animal_Profile(db.Model):
 
     __tablename__ = "animal_profile"
     id = db.Column(db.Integer, primary_key=True)
+    animal_id = db.Column(db.Integer, primary_key=True)
     trait_id = db.Column(db.Integer, db.ForeignKey('traits.id'))
+    trait = relationship("Trait")
 
-    def __init__(self, trait_id):
+    def __init__(self, animal_id, trait_id):
+        self.animal_id = animal_id
         self.trait_id = trait_id
 
 class Shelter(db.Model):
@@ -149,108 +166,129 @@ def index():
 @login_required
 def preferences():
     # pull users saved preferences
-    preferences = Preferences.query.filter(Preferences.user_id == session["user_id"])
-    current = preferences.first()
+    trait_preferences = Preferences.query.join(Trait).filter(Preferences.user_id == session["user_id"]).all()
+    type_preferences = Type_Preference.query.join(Type).filter(Type_Preference.user_id == session["user_id"]).all()
+
+    # array storing currently saved preferences from db
+    current_trait_prefs = []
+    current_type_prefs = []
 
     # if the user clicks button to save preferences and show matches
     if request.method == 'POST':
-        #save preferences to db
-        personality = request.form.getlist("check")
+        # returns array of checked checkboxes
+        selected_type = request.form.getlist("type")
+        selected_traits = request.form.getlist("trait")
 
-        checkboxes = {"dog": 0, "cat": 0, "young": 0, "adult": 0, "senior": 0, "small": 0,
-            "medium": 0, "large": 0, "active": 0, "kids": 0, "animals": 0, "special": 0}
+        # add currently saved type and trait preferences to array
+        # delete from table if no longer selected
+        for trait in trait_preferences:
+            current_trait_prefs.append(trait.trait.name)
+            if trait.trait.name not in selected_traits:
+                db.session.delete(trait)
 
-        for trait in personality:
-            if trait in checkboxes.keys():
-                checkboxes[trait] = 1
+        for animal_type in type_preferences:
+            current_type_prefs.append(animal_type.type.species)
+            if animal_type.type.species not in selected_type:
+                db.session.delete(animal_type)
 
-        if current == None:
-            # create new preferences object for user
-            preferences = Preferences(session['user_id'], checkboxes["dog"], checkboxes["cat"],
-                checkboxes["young"], checkboxes["adult"], checkboxes["senior"], checkboxes["small"],
-                checkboxes["medium"], checkboxes["large"], checkboxes["active"], checkboxes["kids"],
-                checkboxes["animals"], checkboxes["special"])
-            db.session.add(preferences)
-        else:
-            # update users current preferences
-            preferences.update(checkboxes)
+        # add new type and trait preference to respective table
+        for trait in selected_traits:
+            if trait not in current_trait_prefs:
+                new_trait = Trait.query.filter(Trait.name == trait).first()
+                preference = Preferences(session['user_id'], new_trait.id)
+                db.session.add(preference)
 
-        db.session.flush()
+        for animal_type in selected_type:
+            if animal_type not in current_type_prefs:
+                species = Type.query.filter(Type.species == animal_type).first()
+                type_preference = Type_Preference(session['user_id'], species.id)
+                db.session.add(type_preference)
+
         db.session.commit()
+
         return redirect(url_for('match'))
 
     else:
-        if current == None:
-            current = {}
-        else:
-            current = current.__dict__
+        for trait in trait_preferences:
+            current_trait_prefs.append(trait.trait.name)
 
-        return render_template('preferences.html', preferences=current)
+        for type in type_preferences:
+            current_type_prefs.append(type.type.species)
+
+        return render_template('preferences.html', type_preferences=current_type_prefs, trait_preferences=current_trait_prefs)
 
 @app.route('/match')
 @login_required
 def match():
     #pull user preferences from db
-    pref = Preferences.query.filter(Preferences.user_id == session["user_id"]).first()
+    trait_preferences = Preferences.query.join(Trait).filter(Preferences.user_id == session["user_id"]).all()
+    type_preferences = Type_Preference.query.join(Type).filter(Type_Preference.user_id == session["user_id"]).all()
 
-    if pref == None:
+    if trait_preferences == None or type_preferences == None:
         flash("Please set preferences prior to looking for matches.")
         return redirect(url_for('preferences'))
 
-    pref = pref.__dict__
-    description = ['young', 'adult', 'senior', 'small', 'medium', 'large']
-    for trait, value in pref.items():
-        # if trait in description array and value is true, value updated to string
-        if str(trait) in description:
-            if value:
-                pref[trait] = str(trait)
-        if str(trait) == 'active' or str(trait) == 'special':
-            if value:
-                pref[trait] = [0, 1] #accept trait as true or false if selected
-            else:
-                pref[trait] = [0] #accept trait as only false if selected
-        if str(trait) == 'kids' or str(trait) == 'animals':
-            if value:
-                pref[trait] = [1] #accept trait as only true if selected
-            else:
-                pref[trait] = [0, 1] #accept trait as true or false if selected
+    # array storing currently saved preferences from table
+    current_trait_prefs = []
+    current_type_prefs = []
 
+    for trait in trait_preferences:
+        current_trait_prefs.append(trait.trait_id)
+
+    for species in type_preferences:
+        current_type_prefs.append(species.type_id)
+
+    print("TYPE AND TRAIT PREFERENCES")
+    print(current_type_prefs)
+    print(current_trait_prefs)
+
+    # pull all animals that match type preference in db
+    animals = Animal.query.filter(Animal.type_id.in_(current_type_prefs)).all()
+
+    # animal ids that meet criteria and set match criteria
+    ids = []
+    match = True
+
+    for animal in animals:
+        animal_profile = Animal_Profile.query.filter(Animal_Profile.animal_id == animal.id).all()
+        print(animal.name)
+
+        for trait in animal_profile:
+            # if trait not in preferences then not a match 
+            # unless trait is "kids" or "animals" as this is special case where animals w/ & w/o this are a match
+            if trait.trait_id not in current_trait_prefs:
+                 if trait.trait_id not in [8, 9]:
+                    match = False
+
+            print(trait.trait_id)
+            print(match)
+
+        #if animal is a match add id to list of matches
+        if match:
+            ids.append(animal.id)
+        # reset match variable to True for next animal
+        match = True
+
+    print("IDS THAT MATCH CRITERIA")
+    print(ids)    
     # pull users matches and already viewed animals
     swipes = Swipe.query.filter(Swipe.user_id == session["user_id"]).all()
 
-    # create list of animal ids not to be selected with query
-    ids = []
     for swipe in swipes:
-        ids.append(int(swipe.animal_id))
+        if swipe.animal_id in ids:
+            ids.remove(swipe.animal_id)
+
+    print("IDS WITH PREVIOUS MATCHES REMOVED")
     print(ids)
 
     # query db for animals that match preferences
-    dogs = Animal.query.filter(and_(
-        Animal.dog == pref['dog'],
-        or_(Animal.age == pref['young'], Animal.age == pref['adult'], Animal.age == pref['senior']),
-        or_(Animal.size == pref['small'], Animal.size == pref['medium'], Animal.size == pref['large']),
-        Animal.active.in_(pref['active']),
-        Animal.kids.in_(pref['kids']),
-        Animal.animals.in_(pref['animals']),
-        Animal.special.in_(pref['special']),
-        Animal.id.notin_(ids))).all()
+    display_animals = Animal.query.filter(Animal.id.in_(ids)).all()
+    random.shuffle(display_animals)
 
-    cats = Animal.query.filter(and_(
-        Animal.cat == pref['cat'],
-        or_(Animal.age == pref['young'], Animal.age == pref['adult'], Animal.age == pref['senior']),
-        Animal.active.in_(pref['active']),
-        Animal.kids.in_(pref['kids']),
-        Animal.animals.in_(pref['animals']),
-        Animal.special.in_(pref['special']),
-        Animal.id.notin_(ids))).all()
+    print("ANIMALS TO BE DISPLAYED ON MATCH PAGE")
+    print(display_animals)
 
-    print(dogs)
-    print(cats)
-
-    animals = cats + dogs
-    random.shuffle(animals)
-
-    return render_template('match.html', animals=animals)
+    return render_template('match.html', animals=display_animals)
 
 @app.route('/save_swipe', methods=['POST'])
 def save_swipe():

@@ -13,10 +13,10 @@
         <div class="wrap">
             <div id="tinderslide">
                 <ul>
-                    {% for index, animal in enumerate(animals, start=1) %}
-                        <li class="pane{{ index }}" id="{{ animal.id }}">
+                    {% for animal in animals %}
+                        <li class="pane{{ animal.id }}" id="{{ animal.id }}">
                             <div class="img"><img src="{{ url_for('static', filename='img/animal' + str(animal.id) + '.jpeg') }}"></div>
-                            <div class="img_text">{{ animal.name }} | {{ animal.age_num }}</div>
+                            <div class="img_text">{{ animal.name }} | {{ animal.age }} | Sex: {{ animal.sex }}</div>
                             <div class="like"><img src="{{ url_for('static', filename='img/liked.png') }}"></div>
                             <div class="dislike"><img src="{{ url_for('static', filename='img/nope.png') }}"></div>
                         </li>

@@ -40,11 +40,11 @@
         <h4 class="title">TYPE</h4>
         <div class="form-group well">
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectDog" class="type" value="dog" name="check" {% if preferences["dog"] %} checked {% endif %}>
+                <input type="checkbox" id="selectDog" class="type" value="dog" name="type" {% if "dog" in type_preferences %} checked {% endif %}>
                 <label for="selectDog">Dog</label>
             </div>
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectCat" class="type" value="cat" name="check" {% if preferences["cat"] %} checked {% endif %}>
+                <input type="checkbox" id="selectCat" class="type" value="cat" name="type" {% if "cat" in type_preferences %} checked {% endif %}>
                 <label for="selectCat">Cat</label>
             </div>
             <div class="help-block with-errors"></div>
@@ -53,15 +53,15 @@
         <h4 class="title">AGE</h4>
         <div class="form-group well">
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectYoung" class="age" value="young" name="check" {% if preferences["young"] %} checked {% endif %}>
+                <input type="checkbox" id="selectYoung" class="age" value="young" name="trait" {% if "young" in trait_preferences %} checked {% endif %}>
                 <label for="selectYoung">Puppy/Kitten (under 6 months)</label>
             </div>
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectAdult" class="age" value="adult" name="check" {% if preferences["adult"] %} checked {% endif %}>
+                <input type="checkbox" id="selectAdult" class="age" value="adult" name="trait" {% if "adult" in trait_preferences %} checked {% endif %}>
                 <label for="selectAdult">Adult</label>
             </div>
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectSenior" class="age" value="senior" name="check" {% if preferences["senior"] %} checked {% endif %}>
+                <input type="checkbox" id="selectSenior" class="age" value="senior" name="trait" {% if "senior" in trait_preferences %} checked {% endif %}>
                 <label for="selectSenior">Senior (over 8 years)</label>
             </div>
             <div class="help-block with-errors"></div>
@@ -70,15 +70,15 @@
         <h4 class="title">SIZE</h4>
         <div class="form-group well">
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectSmall" class="size" value="small" name="check" {% if preferences["small"] %} checked {% endif %}>
+                <input type="checkbox" id="selectSmall" class="size" value="small" name="trait" {% if "small" in trait_preferences %} checked {% endif %}>
                 <label for="selectSmall">Small (under 25 lbs)</label>
             </div>
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectMedium" class="size" value="medium" name="check" {% if preferences["medium"] %} checked {% endif %}>
+                <input type="checkbox" id="selectMedium" class="size" value="medium" name="trait" {% if "medium" in trait_preferences %} checked {% endif %}>
                 <label for="selectMedium">Medium (25 - 70 lbs)</label>
             </div>
             <div class="checkbox checkbox-inline">
-                <input type="checkbox" id="selectLarge" class="size" value="large" name="check" {% if preferences["large"] %} checked {% endif %}>
+                <input type="checkbox" id="selectLarge" class="size" value="large" name="trait" {% if "large" in trait_preferences %} checked {% endif %}>
                 <label for="selectLarge">Large (over 70 lbs)</label>
             </div>
             <div class="help-block with-errors"></div>
@@ -87,19 +87,19 @@
         <h4 class="title">PERSONALITY</h4>
         <div class="form-group well">
             <div class="checkbox">
-                <input type="checkbox" value="active" id="personality1" name="check" {% if preferences["active"] %} checked {% endif %}>
+                <input type="checkbox" value="active" id="personality1" name="trait" {% if "active" in trait_preferences %} checked {% endif %}>
                 <label for="personality1">Energetic (active lifestyle required)</label>
             </div>
             <div class="checkbox">
-                <input type="checkbox" value="kids" id="personality2" name="check" {% if preferences["kids"] %} checked {% endif %}>
+                <input type="checkbox" value="kids" id="personality2" name="trait" {% if "kids" in trait_preferences %} checked {% endif %}>
                 <label for="personality2">Good with kids</label>
             </div>
             <div class="checkbox">
-                <input type="checkbox" value="animals" id="personality3" name="check" {% if preferences["animals"] %} checked {% endif %}>
+                <input type="checkbox" value="animals" id="personality3" name="trait" {% if "animals" in trait_preferences %} checked {% endif %}>
                 <label for="personality3">Good with other animals</label>
             </div>
             <div class="checkbox">
-                <input type="checkbox" value="special" id="personality4" name="check" {% if preferences["special"] %} checked {% endif %}>
+                <input type="checkbox" value="special" id="personality4" name="trait" {% if "special" in trait_preferences %} checked {% endif %}>
                 <label for="personality4">Special needs/medical needs</label>
             </div>
         </div>
