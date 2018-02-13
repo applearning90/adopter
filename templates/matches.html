@@ -15,7 +15,7 @@
                 
                 <div class="row">
                     <div class="col-sm-4"><div class="img"><img src="{{ url_for('static', filename='img/animal' + str(animal.id) + '.jpeg') }}"></div></div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 info">
                         <h4>{{ animal.name }}</h4>
                         <div>Age: {{ animal.age }}</div>
                         <div>Breed: {{ animal.breed }}</div>
@@ -24,7 +24,8 @@
                         <div>Phone: {{ animal.shelter.phone }}</div>
                         <div>Address: {{ animal.shelter.address }}</div>
                     </div>
-                    <div class="col-sm-4">{{ animal.description }}</div>
+                    <div class="col-sm-4 info">{{ animal.description }}</div>
+                    <button type="button" class="btn btn-warning">Delete match</button>
                 </div>
             </div>
         {% endfor %}

@@ -21,6 +21,7 @@
                             <div class="dislike"><img src="{{ url_for('static', filename='img/nope.png') }}"></div>
                         </li>
                     {% endfor %}
+                        <div class="no-matches">Sorry, you have run out of matches! Please broaden your preferences or come back later to see new adoptable animals.</div>
                 </ul>
             </div>
         </div>
@@ -30,8 +31,5 @@
             <a href="#" class="dislike"><img src="{{ url_for('static', filename='img/dislike_button.png') }}"></a>
             <a href="#" class="like"><img src="{{ url_for('static', filename='img/like_button.png') }}"></a>
         </div>
-
-        <!-- jTinder status text  -->
-        <div id="status"></div>
     </div>
 {% endblock %}

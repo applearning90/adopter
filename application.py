@@ -179,7 +179,7 @@ def preferences():
     if request.method == 'POST':
         # returns array of checked checkboxes
         selected_type = request.form.getlist("type")
-        selected_traits = request.form.getlist("trait")
+        selected_traits = request.form.getlist("age") + request.form.getlist("size") + request.form.getlist("trait")
 
         # add currently saved type and trait preferences to array
         # delete from table if no longer selected

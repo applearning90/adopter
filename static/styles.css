@@ -39,6 +39,13 @@ main .form-horizontal
     color: white;
 }
 
+.no-matches {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%); 
+    font-size: 20px;
+}
+
 .form-control
 {
     max-width: 300px;
@@ -145,4 +152,9 @@ main .form-horizontal
 
 .btn-outline-gradient:hover span {
 	background: transparent;
+}
+
+.info {
+    text-align: left;
+}
 }
