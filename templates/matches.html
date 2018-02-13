@@ -25,7 +25,7 @@
                         <div>Address: {{ animal.shelter.address }}</div>
                     </div>
                     <div class="col-sm-4 info">{{ animal.description }}</div>
-                    <button type="button" class="btn btn-warning">Delete match</button>
+                    <button type="button" class="btn btn-warning delete" id="{{ animal.id }}">Delete match</button>
                 </div>
             </div>
         {% endfor %}

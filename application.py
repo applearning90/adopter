@@ -286,17 +286,36 @@ def save_swipe():
     if request.method == 'POST':
         # Ensure item id parameter is present
         if not request.form.get("animal_id"):
-            raise RuntimeError("missing item")
+            raise RuntimeError("missing animal id")
 
         #create swipe object and add to db
         swipe = Swipe(session["user_id"], int(request.form.get("animal_id")), int(request.form.get("match")))
         db.session.add(swipe)
         db.session.commit()
 
-        return "swipe saved"
+        return "swipe saved successfully"
 
     else:
-        return "error"
+        return "error saving swipe"
+
+@app.route('/delete_match', methods=['POST'])
+def delete_match():
+
+    if request.method == 'POST':
+        # Ensure item id parameter is present
+        if not request.form.get("animal_id"):
+            raise RuntimeError("missing animal id")
+
+        # update swipe to set match to False
+        swipe = Swipe.query.filter(Swipe.user_id == session["user_id"], Swipe.animal_id == int(request.form.get("animal_id"))).first()
+        swipe.match = False
+        db.session.commit()
+
+        return "match deleted successfully"
+
+    else:
+        return "error deleting match"
+
 
 @app.route('/matches')
 @login_required

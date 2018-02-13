@@ -5,17 +5,40 @@
 {% endblock %}
 
 {% block main %}
-    <form action="{{ url_for('login') }}" method="post">
-        <fieldset>
-            <div class="form-group">
-                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
+    <div class="container">
+        <div class="row spacing">
+            <h3>Looking to adopt your next pet? Adopter is here to make that fun and easy!</h3>
+        </div>
+
+        <div class="row spacing">
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename='img/cat-health-list.png') }}" class="img-responsive center-block" alt="animal checklist">
+                <div>Input your preferences for your next pet.</div>
             </div>
-            <div class="form-group">
-                <input class="form-control" name="password" placeholder="Password" type="password"/>
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename='img/dog.png') }}" class="img-responsive center-block" alt="pets">
+                <div>Swipe through animals in your area and select your favorites.</div>
             </div>
-            <div class="form-group">
-                <button class="btn btn-default" type="submit">Log In</button>
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename='img/pet-shelter.png') }}" class="img-responsive center-block" alt="home">
+                <div>Contact your matches shelters to meet your pet and bring them home.</div>
             </div>
-        </fieldset>
-    </form>
+        </div>
+    
+        <div class="row spacing">
+            <form action="{{ url_for('login') }}" method="post">
+                <fieldset>
+                    <div class="form-group">
+                        <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" name="password" placeholder="Password" type="password"/>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-default" type="submit">Log In</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
 {% endblock %}

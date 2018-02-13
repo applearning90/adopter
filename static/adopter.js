@@ -54,3 +54,11 @@ $('[data-toggle="validator"]').validator({
 	$size_checkboxes.not(':checked').trigger('input')
 }) 
 
+// delete match button script
+$('.delete').on('click', function () {
+	// hide match
+	$(this).closest(".well").hide();
+	
+	// POST item index (asynchronously) to server to store swipe info
+	$.post('/delete_match', { animal_id: parseInt($(this).attr('id')) });
+});

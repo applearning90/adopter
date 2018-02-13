@@ -15,6 +15,11 @@ main .form-horizontal
     margin-right: auto;
 }
 
+.spacing 
+{
+    padding: 20px 10px;
+}
+
 .background_img
 {
     /* center background image and cover width */
@@ -33,13 +38,26 @@ main .form-horizontal
     background: #fff;
 }
 
+.row 
+{
+    position: relative;
+}
+
+.btn-warning 
+{
+    position: absolute;
+    right: 16px;
+    bottom: 0px;
+}
+
 .text
 {
     /* set text colour for index text over image */
     color: white;
 }
 
-.no-matches {
+.no-matches 
+{
     position: relative;
     top: 50%;
     transform: translateY(-50%); 

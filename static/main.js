@@ -4,17 +4,11 @@
 $("#tinderslide").jTinder({
 	// dislike callback
     onDislike: function (item) {
-	    // set the status text
-        $('#status').html('Dislike image ' + (item.index()+1));
-
         // POST item index (asynchronously) to server to store swipe info
 	    $.post('/save_swipe', { animal_id: parseInt(item.attr('id')), match: 0 });
     },
 	// like callback
     onLike: function (item) {
-	    // set the status text
-        $('#status').html('Like image ' + (item.index()+1));
-
         // POST item index (asynchronously) to server to store swipe info
 	    $.post('/save_swipe', { animal_id: parseInt(item.attr('id')), match: 1 });
     },
