@@ -8,6 +8,7 @@ from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
 import os
 import random
+import petpy
 from functions import *
 
 # Create application instance
@@ -38,6 +39,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['DATABASE_URL']
 app.config["SQLALCHEMY_ECHO"] = True
 db = SQLAlchemy(app)
+
+# instantiate petpy perfinder api wrapper
+pf = petpy.Petfinder('699e7714e310f56880774904c2884139')
 
 # Adopter database tables
 class User(db.Model):
@@ -249,7 +253,6 @@ def match():
 
     for animal in animals:
         animal_profile = Animal_Profile.query.filter(Animal_Profile.animal_id == animal.id).all()
-        print(animal.name)
 
         for trait in animal_profile:
             # if trait not in preferences then not a match 
@@ -257,9 +260,6 @@ def match():
             if trait.trait_id not in current_trait_prefs:
                  if trait.trait_id not in [8, 9]:
                     match = False
-
-            print(trait.trait_id)
-            print(match)
 
         #if animal is a match add id to list of matches
         if match:
@@ -330,9 +330,6 @@ def matches():
 
     # query animal table for ids that match positive swipes
     animals = Animal.query.join(Shelter).filter(Animal.id.in_(ids)).all()
-
-    for animal in animals:
-        print(animal.sex)
 
     return render_template('matches.html', animals=animals)
 
