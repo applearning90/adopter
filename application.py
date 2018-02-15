@@ -8,7 +8,6 @@ from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
 import os
 import random
-import petpy
 from functions import *
 
 # Create application instance
@@ -39,9 +38,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['DATABASE_URL']
 app.config["SQLALCHEMY_ECHO"] = True
 db = SQLAlchemy(app)
-
-# instantiate petpy perfinder api wrapper
-pf = petpy.Petfinder('699e7714e310f56880774904c2884139')
 
 # Adopter database tables
 class User(db.Model):
