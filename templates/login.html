@@ -5,27 +5,55 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container">
-        <div class="row spacing">
-            <h3>Looking to adopt your next pet? Adopter is here to make that fun and easy!</h3>
-        </div>
+    <!-- Masthead -->
+    <header class="masthead text-white text-center">
+      	<div class="overlay"></div>
+      	<div class="container">
+        	<div class="row">
+        	  	<div class="col-xl-9">
+            		<h1>Looking to adopt your next pet? Adopter is here to make that fun and easy!</h1>
+        		</div>
+        	</div>
+      	</div>
+    </header>
 
-        <div class="row spacing">
-            <div class="col-md-4">
-                <img src="{{ url_for('static', filename='img/cat-health-list.png') }}" class="img-responsive center-block" alt="animal checklist">
-                <div>Input your preferences for your next pet.</div>
-            </div>
-            <div class="col-md-4">
-                <img src="{{ url_for('static', filename='img/dog.png') }}" class="img-responsive center-block" alt="pets">
-                <div>Swipe through animals in your area and select your favorites.</div>
-            </div>
-            <div class="col-md-4">
-                <img src="{{ url_for('static', filename='img/pet-shelter.png') }}" class="img-responsive center-block" alt="home">
-                <div>Contact your matches shelters to meet your pet and bring them home.</div>
-            </div>
-        </div>
-    
-        <div class="row spacing">
+    <!-- Icons Grid -->
+    <section class="features-icons text-center">
+    	<div class="container">
+        	<div class="row">
+        		<div class="col-md-4 center-block">
+	            	<div class="features-icons-item">
+	            		<div class="features-icons-icon">
+	            			<img src="{{ url_for('static', filename='img/cat-health-list.png') }}" class="img-responsive center-block" alt="animal checklist">
+	            		</div>
+	              		<h3>Select Preferences</h3>
+	              		<p class="lead mb-0">Choose what criteria is important for your next pet.</p>
+	            	</div>
+	        	</div>
+	          	<div class="col-md-4 center-block">
+	            	<div class="features-icons-item">
+	              		<div class="features-icons-icon">
+	                		<img src="{{ url_for('static', filename='img/dog.png') }}" class="img-responsive center-block" alt="pets">
+	              		</div>
+	              		<h3>Swipe</h3>
+	              		<p class="lead mb-0">Swipe through animals in your area and select your favorites.</p>
+	            	</div>
+	          	</div>
+	          	<div class="col-md-4 center-block">
+	            	<div class="features-icons-item">
+	              		<div class="features-icons-icon">
+	                		<img src="{{ url_for('static', filename='img/pet-shelter.png') }}" class="img-responsive center-block" alt="home">
+	              		</div>
+	              		<h3>Match</h3>
+	              		<p class="lead mb-0">Contact the shelters to meet your pet and bring them home.</p>
+	            	</div>
+	          	</div>
+        	</div>
+      	</div>
+    </section>
+
+    <section>    
+        <div class="row">
             <form action="{{ url_for('login') }}" method="post">
                 <fieldset>
                     <div class="form-group">
@@ -40,5 +68,5 @@
                 </fieldset>
             </form>
         </div>
-    </div>
+    </section>
 {% endblock %}
