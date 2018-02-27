@@ -1,6 +1,6 @@
 main { 
     text-align: center;
-    padding-bottom: 70px; 
+    padding-bottom: 30px; 
 }
 
 main .form-horizontal {
@@ -26,6 +26,10 @@ main .form-horizontal {
 
 .match, .preferences {
     background: #fff;
+}
+
+.row {
+  position: relative;
 }
 
 header.masthead {
@@ -67,6 +71,12 @@ header.masthead h1 {
   header.masthead h1 {
     font-size: 3rem;
   }
+}
+
+.icons {
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
 }
 
 .features-icons {
@@ -212,4 +222,8 @@ header.masthead h1 {
 
 .info {
     text-align: left;
+}
+
+.footer {
+    margin-bottom: 0;
 }

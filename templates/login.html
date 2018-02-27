@@ -18,16 +18,16 @@
     </header>
 
     <!-- Icons Grid -->
-    <section class="features-icons text-center">
-    	<div class="container">
+    <div class="features-icons text-center">
+    	<div class="container icons">
         	<div class="row">
         		<div class="col-md-4 center-block">
 	            	<div class="features-icons-item">
 	            		<div class="features-icons-icon">
 	            			<img src="{{ url_for('static', filename='img/cat-health-list.png') }}" class="img-responsive center-block" alt="animal checklist">
 	            		</div>
-	              		<h3>Select Preferences</h3>
-	              		<p class="lead mb-0">Choose what criteria is important for your next pet.</p>
+	              		<h3>Filter</h3>
+	              		<p class="lead">Choose the criteria that is important for your next pet.</p>
 	            	</div>
 	        	</div>
 	          	<div class="col-md-4 center-block">
@@ -36,7 +36,7 @@
 	                		<img src="{{ url_for('static', filename='img/dog.png') }}" class="img-responsive center-block" alt="pets">
 	              		</div>
 	              		<h3>Swipe</h3>
-	              		<p class="lead mb-0">Swipe through animals in your area and select your favorites.</p>
+	              		<p class="lead">Swipe through animals in your area and select your favorites.</p>
 	            	</div>
 	          	</div>
 	          	<div class="col-md-4 center-block">
@@ -45,14 +45,14 @@
 	                		<img src="{{ url_for('static', filename='img/pet-shelter.png') }}" class="img-responsive center-block" alt="home">
 	              		</div>
 	              		<h3>Match</h3>
-	              		<p class="lead mb-0">Contact the shelters to meet your pet and bring them home.</p>
+	              		<p class="lead">Contact the shelters to meet your pet and bring them home.</p>
 	            	</div>
 	          	</div>
         	</div>
       	</div>
-    </section>
+    </div>
 
-    <section>    
+    <div>  
         <div class="row">
             <form action="{{ url_for('login') }}" method="post">
                 <fieldset>
@@ -68,5 +68,5 @@
                 </fieldset>
             </form>
         </div>
-    </section>
+    </div>
 {% endblock %}
