@@ -13,7 +13,7 @@
         {% for animal in animals %}
             <div class="well">
                 
-                <div class="row">
+                <div class="row match-row">
                     <div class="col-sm-4"><div class="img"><img src="{{ url_for('static', filename='img/animal' + str(animal.id) + '.jpeg') }}"></div></div>
                     <div class="col-sm-4 info">
                         <h4>{{ animal.name }}</h4>
