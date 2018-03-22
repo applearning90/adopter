@@ -1,14 +1,19 @@
 from flask import Flask, url_for, request, render_template, session, redirect, flash
 from flask_session import Session
+from flask_oauthlib.client import OAuth
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_, and_, update
 from sqlalchemy.orm import relationship
 
 from passlib.apps import custom_app_context as pwd_context
+from six.moves.urllib.parse import urlencode
+import requests
 from tempfile import mkdtemp
 import os
+import json
 import random
 from functions import *
+import constants
 
 # Create application instance
 app = Flask(__name__)
@@ -24,11 +29,28 @@ if app.config["DEBUG"]:
 
 # configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = False 
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["PREFERRED_URL_SCHEME"] = 'https'
-app.config["DEBUG"] = True
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RTLH&^%' 
+app.config["DEBUG"] = True 
 Session(app)
+
+# initialize OAuth
+oauth = OAuth(app)
+auth0 = oauth.remote_app(
+    'auth0',
+    consumer_key=constants.AUTH0_CLIENT_ID,
+    consumer_secret=constants.AUTH0_CLIENT_SECRET,
+    request_token_params={
+        'scope': 'openid profile',
+        'audience': 'https://' + constants.AUTH0_DOMAIN + '/userinfo'
+    },
+    base_url='https://%s' % constants.AUTH0_DOMAIN,
+    access_token_method='POST',
+    access_token_url='/oauth/token',
+    authorize_url='/authorize',
+)
 
 # store refernece to python functions required in jinja
 app.jinja_env.globals.update(enumerate=enumerate, str=str)
@@ -162,7 +184,7 @@ def index():
         return redirect(url_for('preferences'))
     # else if user reached route via GET
     else:
-        return render_template('index.html')
+        return render_template('index.html', userinfo=session[constants.PROFILE_KEY])
 
 @app.route('/preferences', methods=['GET', 'POST'])
 @login_required
@@ -355,30 +377,43 @@ def register():
     else:
         return render_template('register.html')
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")
 def login():
     """Log user in."""
 
-    # forget any user_id
-    session.clear()
+    return auth0.authorize(callback=constants.AUTH0_CALLBACK_URL)
 
-    if request.method == "POST":
-        # query database for username
-        user = User.query.filter(User.username == request.form.get("username")).first()
+@app.route("/home")
+def home():
+    return render_template("login.html")
 
-        # ensure username exists and password is correct
-        if user == None or not pwd_context.verify(request.form.get("password"), user.hash):
-            # flash message and redirect back to login page
-            flash("Username and/or password is incorrect")
-            return redirect(url_for("login"))
+@app.route('/callback')
+def callback_handling():
+    # Handles response from token endpoint
+    resp = auth0.authorized_response()
+    if resp is None:
+        raise Exception('Access denied: reason=%s error=%s' % (
+            request.args['error_reason'],
+            request.args['error_description']
+        ))
+    
+    url = 'https://' + constants.AUTH0_DOMAIN + '/userinfo'
+    headers = {'authorization': 'Bearer ' + resp['access_token']}
+    resp = requests.get(url, headers=headers)
+    userinfo = resp.json()
+    
+    # Store the tue user information in flask session.
+    session[constants.JWT_PAYLOAD] = userinfo
+    
+    session[constants.PROFILE_KEY] = {
+        'user_id': userinfo['sub'],
+        'name': userinfo['name'],
+        'picture': userinfo['picture']
+    }
 
-        # remember which user is logged in
-        session['user_id'] = user.id
-
-        # redirect user to home page
-        return redirect(url_for("index"))
-    else:
-        return render_template("login.html")
+    print("callback finished")
+    
+    return redirect(url_for("index"))
 
 @app.route("/logout")
 def logout():
@@ -387,5 +422,6 @@ def logout():
     # forget any user_id
     session.clear()
 
-    # redirect user to login form
-    return redirect(url_for("login"))
+    # Redirect user to logout endpoint
+    params = {'returnTo': url_for("home", _external=True), 'client_id': constants.AUTH0_CLIENT_ID}
+    return redirect(auth0.base_url + '/v2/logout?' + urlencode(params))

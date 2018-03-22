@@ -28,19 +28,24 @@
                     <a class="navbar-brand" href="{{ url_for('index') }}">Adopter</a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbar">
-                    {% if session.user_id %}
+                    {% if session.profile %}
                         <ul class="nav navbar-nav">
                             <li><a href="{{ url_for('preferences') }}">Preferences</a></li>
                             <li><a href="{{ url_for('match') }}">Match</a></li>
                             <li><a href="{{ url_for('matches') }}">Matches</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+                            <li><p>Welcome {{userinfo['name']}}</p></li>
+                            <li><a href="{{ url_for('logout') }}">Logout</a></li>
                         </ul>
                     {% else %}
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="{{ url_for('register') }}">Register</a></li>
-                            <li><a href="{{ url_for('login') }}">Log In</a></li>
+                            <li>
+                                <div class="login-box auth0-box before">
+                                    <a class="btn btn-primary btn-lg btn-login btn-block" href="/login">Log In</a>
+                                </div>
+                            </li>
                         </ul>
                     {% endif %}
                 </div>

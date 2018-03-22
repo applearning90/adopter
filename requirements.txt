@@ -10,3 +10,7 @@ passlib==1.7.1
 psycopg2==2.7.3.2
 SQLAlchemy==1.2.2
 Werkzeug==0.14.1
+python-dotenv
+flask-oauthlib
+six
+requests

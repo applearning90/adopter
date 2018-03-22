@@ -77,6 +77,12 @@ header.masthead h1 {
   }
 }
 
+.navbar-nav > li > p {
+  margin: 0;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
 .icons {
     margin-left: auto;
     margin-right: auto;
@@ -229,7 +235,6 @@ header.masthead h1 {
 }
 
 .footer {
-    position: absolute;
     margin: 0;
     width: 100%;
     left: 0;
