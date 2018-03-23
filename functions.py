@@ -8,7 +8,7 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'profile' not in session:
+        if constants.PROFILE_KEY not in session:
             return redirect("/home")
         return f(*args, **kwargs)
     return decorated_function

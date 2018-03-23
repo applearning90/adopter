@@ -66,14 +66,12 @@ class User(db.Model):
 
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Text)
+    user_id = db.Column(db.Text)
     email = db.Column(db.Text)
-    hash = db.Column(db.Text)
 
-    def __init__(self, username, email, hash):
-        self.username = username
+    def __init__(self, user_id, email):
+        self.user_id = user_id
         self.email = email
-        self.hash = hash
 
 class Trait(db.Model):
 
@@ -351,37 +349,15 @@ def matches():
 
     return render_template('matches.html', animals=animals)
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register')
 def register():
-    if request.method == 'POST':
-        # hash password
-        hash = pwd_context.hash(request.form.get("password"))
-
-        # Check if username or email are already registered
-        rows = User.query.filter(or_(User.username == request.form.get("username"), User.email == request.form.get("email"))).first()
-
-        if rows != None:
-            flash("Username and/or email already registered.")
-            return redirect(url_for('register'))
-
-        #create user object and add to db
-        user = User(request.form.get("username"), request.form.get("email"), hash)
-        db.session.add(user)
-        db.session.flush()
-
-        # remember which user is logged in
-        session['user_id'] = user.id
-
-        db.session.commit()
-        return redirect(url_for('index'))
-    else:
-        return render_template('register.html')
+    """ Sign up new user """
+    return auth0.authorize(callback=constants.AUTH0_CALLBACK_URL, mode="signUp")
 
 @app.route("/login")
 def login():
     """Log user in."""
-
-    return auth0.authorize(callback=constants.AUTH0_CALLBACK_URL)
+    return auth0.authorize(callback=constants.AUTH0_CALLBACK_URL, mode="login")
 
 @app.route("/home")
 def home():
@@ -407,11 +383,22 @@ def callback_handling():
     
     session[constants.PROFILE_KEY] = {
         'user_id': userinfo['sub'],
-        'name': userinfo['name'],
+        'email': userinfo['name'],
         'picture': userinfo['picture']
     }
 
-    print("callback finished")
+    # Check if user_id already in users table
+    user = User.query.filter(User.user_id == session[constants.PROFILE_KEY]['user_id']).first()
+
+    if user is None:
+        # register: create user object and add to db
+        user = User(session[constants.PROFILE_KEY]['user_id'], session[constants.PROFILE_KEY]['email'])
+        db.session.add(user)
+        db.session.flush()
+        db.session.commit()
+
+    # remember which user is logged in
+    session['user_id'] = user.id
     
     return redirect(url_for("index"))
 

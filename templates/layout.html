@@ -35,12 +35,16 @@
                             <li><a href="{{ url_for('matches') }}">Matches</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li><p>Welcome {{userinfo['name']}}</p></li>
+                            <li><p>Welcome {{ userinfo['email'] }}</p></li>
                             <li><a href="{{ url_for('logout') }}">Logout</a></li>
                         </ul>
                     {% else %}
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{{ url_for('register') }}">Register</a></li>
+                            <li>
+                                <div class="login-box auth0-box before">
+                                    <a class="btn btn-primary btn-lg btn-login btn-block" href="/register">Sign Up</a>
+                                </div>
+                            </li>
                             <li>
                                 <div class="login-box auth0-box before">
                                     <a class="btn btn-primary btn-lg btn-login btn-block" href="/login">Log In</a>
@@ -69,6 +73,7 @@
             <div class="container">
                 <div class="row">
                     <p class="navbar-text text-muted text-center">&copy; Radost Rychtera 2018</p>
+                    <p>Icons made by Freepik from www.flaticon.com </p>
                 </div>
             </div>
         </footer>
