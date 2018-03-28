@@ -2,12 +2,13 @@ from flask import Flask, url_for, request, render_template, session, redirect, f
 from flask_session import Session
 from flask_oauthlib.client import OAuth
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_, and_, update
+from sqlalchemy import or_, and_, update, desc
 from sqlalchemy.orm import relationship
 
 from passlib.apps import custom_app_context as pwd_context
 from six.moves.urllib.parse import urlencode
 import requests
+from datetime import datetime
 from tempfile import mkdtemp
 import os
 import json
@@ -168,11 +169,13 @@ class Swipe(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     animal_id = db.Column(db.Integer, db.ForeignKey('animals.id'))
     match = db.Column(db.Boolean)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
 
-    def __init__(self, user_id, animal_id, match):
+    def __init__(self, user_id, animal_id, match, timestamp):
         self.user_id = user_id
         self.animal_id = animal_id
         self.match = match
+        self.timestamp = timestamp
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
@@ -308,7 +311,7 @@ def save_swipe():
             raise RuntimeError("missing animal id")
 
         #create swipe object and add to db
-        swipe = Swipe(session["user_id"], int(request.form.get("animal_id")), int(request.form.get("match")))
+        swipe = Swipe(session["user_id"], int(request.form.get("animal_id")), int(request.form.get("match")), datetime.utcnow())
         db.session.add(swipe)
         db.session.commit()
 
@@ -340,7 +343,7 @@ def delete_match():
 @login_required
 def matches():
     # pull users matches from swipes table
-    swipes = Swipe.query.filter(and_(Swipe.user_id == session["user_id"], Swipe.match == True)).all()
+    swipes = Swipe.query.filter(and_(Swipe.user_id == session["user_id"], Swipe.match == True)).order_by(desc(Swipe.timestamp)).all()
 
     # create list of animal ids to be selected with query
     ids = []
@@ -349,6 +352,7 @@ def matches():
 
     # query animal table for ids that match positive swipes
     animals = Animal.query.join(Shelter).filter(Animal.id.in_(ids)).all()
+    animals = sorted(animals, key=lambda animal: ids.index(animal.id))
 
     return render_template('matches.html', animals=animals, userinfo=session[constants.PROFILE_KEY])
 
@@ -401,7 +405,7 @@ def callback_handling():
         db.session.commit()
 
     # remember which user is logged in
-    session['user_id'] = user.id
+    session["user_id"] = user.id
     
     return redirect(url_for("index"))
 
