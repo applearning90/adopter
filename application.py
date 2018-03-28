@@ -237,7 +237,10 @@ def preferences():
         for type in type_preferences:
             current_type_prefs.append(type.type.species)
 
-        return render_template('preferences.html', type_preferences=current_type_prefs, trait_preferences=current_trait_prefs)
+        return render_template('preferences.html', 
+                                type_preferences=current_type_prefs, 
+                                trait_preferences=current_trait_prefs, 
+                                userinfo=session[constants.PROFILE_KEY])
 
 @app.route('/match')
 @login_required
@@ -294,7 +297,7 @@ def match():
     display_animals = Animal.query.filter(Animal.id.in_(ids)).all()
     random.shuffle(display_animals)
 
-    return render_template('match.html', animals=display_animals)
+    return render_template('match.html', animals=display_animals, userinfo=session[constants.PROFILE_KEY])
 
 @app.route('/save_swipe', methods=['POST'])
 def save_swipe():
@@ -347,7 +350,7 @@ def matches():
     # query animal table for ids that match positive swipes
     animals = Animal.query.join(Shelter).filter(Animal.id.in_(ids)).all()
 
-    return render_template('matches.html', animals=animals)
+    return render_template('matches.html', animals=animals, userinfo=session[constants.PROFILE_KEY])
 
 @app.route('/register')
 def register():
@@ -383,7 +386,7 @@ def callback_handling():
     
     session[constants.PROFILE_KEY] = {
         'user_id': userinfo['sub'],
-        'email': userinfo['name'],
+        'name': userinfo['name'],
         'picture': userinfo['picture']
     }
 
@@ -392,7 +395,7 @@ def callback_handling():
 
     if user is None:
         # register: create user object and add to db
-        user = User(session[constants.PROFILE_KEY]['user_id'], session[constants.PROFILE_KEY]['email'])
+        user = User(session[constants.PROFILE_KEY]['user_id'], session[constants.PROFILE_KEY]['name'])
         db.session.add(user)
         db.session.flush()
         db.session.commit()
